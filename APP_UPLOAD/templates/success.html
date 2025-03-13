@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Concluído</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .logo {
+            position: absolute;
+            top: 20px; /* Ajuste a distância do topo conforme necessário */
+            left: 20px; /* Ajuste a distância da esquerda conforme necessário */
+            width: 8cm;
+            height: 5cm;
+        }
+    </style>
+</head>
+<body>
+    <img src="{{ url_for('static', filename='images/grupo_carvalho.png') }}" alt="Logo do Grupo Carvalho" class="logo">
+    <h2>Arquivo enviado com sucesso!</h2>
+    <button class="btn" onclick="window.location.href='/'">Voltar</button>
+</body>
+</html>

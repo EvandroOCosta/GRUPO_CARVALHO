@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GRUPO CARVALHO</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Garante que o body ocupa toda a altura da tela */
+            margin: 0; /* Remove a margem padrão do body */
+            position: relative; /* Permite posicionar a imagem absolutamente */
+        }
+        .logo {
+            position: absolute;
+            top: 20px; /* Ajuste a distância do topo conforme necessário */
+            left: 20px; /* Ajuste a distância da esquerda conforme necessário */
+            width: 8cm;
+            height: 5cm;
+        }
+    </style>
+</head>
+<body>
+    <img src="{{ url_for('static', filename='images/grupo_carvalho.png') }}" alt="Logo do Grupo Carvalho" class="logo">
+    <h1>Envie o arquivo Excel</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".xlsx" required>
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>
