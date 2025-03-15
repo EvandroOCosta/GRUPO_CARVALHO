@@ -6,6 +6,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from gspread_dataframe import set_with_dataframe
 import calendar
+import json
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -275,7 +276,13 @@ def upload_file():
 
         # =================== GRAVAR NO GOOGLE SHEETS ===================
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        creds = ServiceAccountCredentials.from_json_keyfile_name(r"config\grupocarvalho-adcf355b43a3.json", scope)
+        # creds = ServiceAccountCredentials.from_json_keyfile_name(r"config\grupocarvalho-adcf355b43a3.json", scope)
+
+        # Pega as credenciais da variável de ambiente e carrega como JSON
+        credenciais_json = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
+
+        # Usa as credenciais diretamente, sem precisar de um arquivo físico
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(credenciais_json, scope)
         client = gspread.authorize(creds)
 
         # Abrindo a planilha pelo nome
