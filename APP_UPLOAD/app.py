@@ -276,8 +276,7 @@ def upload_file():
 
         # =================== GRAVAR NO GOOGLE SHEETS ===================
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        # creds = ServiceAccountCredentials.from_json_keyfile_name(r"config\grupocarvalho-adcf355b43a3.json", scope)
-
+        
         # Pega as credenciais da variável de ambiente e carrega como JSON
         credenciais_json = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
 
