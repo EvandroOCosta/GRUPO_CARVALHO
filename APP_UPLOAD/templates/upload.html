@@ -24,7 +24,9 @@
     </style>
 </head>
 <body>
-    <img src="{{ url_for('static', filename='images/grupo_carvalho.png') }}" alt="Logo do Grupo Carvalho" class="logo">
+
+    <img src="{{ url_for('static', filename='images/GRUPO_CARVALHO.png') }}" alt="Logo do Grupo Carvalho" class="logo">
+
     <h1>Envie o arquivo Excel</h1>
     <form action="/upload" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept=".xlsx" required>
