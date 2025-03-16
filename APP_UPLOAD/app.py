@@ -29,7 +29,7 @@ def upload_file():
     filename = secure_filename(file.filename)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(file_path)
-    return render_template('success.html')  # Renderiza a página de sucesso
+    # return render_template('success.html')  # Renderiza a página de sucesso
     
     try:
         # Ler a primeira aba do arquivo Excel
