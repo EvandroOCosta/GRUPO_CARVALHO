@@ -29,7 +29,7 @@ def upload_file():
     filename = secure_filename(file.filename)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(file_path)
-    return render_template('success.html')  # Renderiza a página de sucesso
+    # return render_template('success.html')  # Renderiza a página de sucesso
     
     try:
         # Ler a primeira aba do arquivo Excel
@@ -313,7 +313,8 @@ def upload_file():
         worksheet_movimentacao.clear()  # Limpar a aba antes de atualizar
         set_with_dataframe(worksheet_movimentacao, df_concatenado)
 
-        return df_concatenado.to_html() # Exibir os dados na página web
+        # return df_concatenado.to_html() # Exibir os dados na página web
+        return render_template('success.html')  # Renderiza a página de sucesso
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
