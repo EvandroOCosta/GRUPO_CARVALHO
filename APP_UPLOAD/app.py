@@ -108,44 +108,44 @@ def upload_file():
         print("\nMOVIMENTAÇÃO SPLT:")
         print(df_splt_melted)  # Exibir no terminal
 
-        # =================== PROCESSAMENTO DA ABA TLPS ===================
+        # =================== PROCESSAMENTO DA ABA TR ===================
 
-        nome_aba_tlps = "TLPS"  # Nome da aba que será processada
-        df_tlps = pd.read_excel(file_path, sheet_name=nome_aba_tlps)
+        nome_aba_TR = "TR"  # Nome da aba que será processada
+        df_TR = pd.read_excel(file_path, sheet_name=nome_aba_TR)
 
         # Remover a linha 33 (índice 32, pois o índice começa em 0)
-        df_tlps.drop(index=32, inplace=True, errors='ignore')
+        df_TR.drop(index=32, inplace=True, errors='ignore')
 
         # Remover as colunas indesejadas
-        colunas_remover_tlps = ['DISCRI', 'NOME', 'NOME.1', 'NOME.2', 'NOME.3']
-        df_tlps.drop(columns=[col for col in colunas_remover_tlps if col in df_tlps.columns], inplace=True, errors='ignore')
+        colunas_remover_TR = ['DISCRI', 'NOME', 'NOME.1', 'NOME.2', 'NOME.3']
+        df_TR.drop(columns=[col for col in colunas_remover_TR if col in df_TR.columns], inplace=True, errors='ignore')
 
         # Criar a coluna DATA com os valores da primeira coluna original (sem concatenação com o mês)
-        df_tlps.rename(columns={df_tlps.columns[0]: "DATA"}, inplace=True)
+        df_TR.rename(columns={df_TR.columns[0]: "DATA"}, inplace=True)
 
         # Criar a nova coluna MES com o valor da variável mes
-        df_tlps["MES"] = mes
+        df_TR["MES"] = mes
 
         # Criar a coluna LOJA com o nome da aba
-        df_tlps["LOJA"] = nome_aba_tlps
+        df_TR["LOJA"] = nome_aba_TR
 
         # Transformar os dados de pagamento no formato desejado
-        df_tlps_melted = df_tlps.melt(id_vars=["DATA", "MES", "LOJA"], var_name="PAGAMENTO", value_name="VALOR")
+        df_TR_melted = df_TR.melt(id_vars=["DATA", "MES", "LOJA"], var_name="PAGAMENTO", value_name="VALOR")
 
         # Substituir NaN por zero
-        df_tlps_melted["VALOR"] = df_tlps_melted["VALOR"].fillna(0)
+        df_TR_melted["VALOR"] = df_TR_melted["VALOR"].fillna(0)
 
         # Remover linhas onde VALOR é zero
-        df_tlps_melted = df_tlps_melted[df_tlps_melted["VALOR"] != 0]
+        df_TR_melted = df_TR_melted[df_TR_melted["VALOR"] != 0]
 
         # Remover linhas onde a coluna DATA contém a palavra "TOTAL"
-        df_tlps_melted = df_tlps_melted[~df_tlps_melted["DATA"].astype(str).str.contains("TOTAL", case=False, na=False)]
+        df_TR_melted = df_TR_melted[~df_TR_melted["DATA"].astype(str).str.contains("TOTAL", case=False, na=False)]
 
         # Converter a coluna MES para datetime
-        df_tlps_melted["MES"] = pd.to_datetime(df_tlps_melted["MES"], format="%m/%Y", errors="coerce")
+        df_TR_melted["MES"] = pd.to_datetime(df_TR_melted["MES"], format="%m/%Y", errors="coerce")
 
         # Garantir que DATA seja um número válido
-        df_tlps_melted["DATA"] = pd.to_numeric(df_tlps_melted["DATA"], errors="coerce")
+        df_TR_melted["DATA"] = pd.to_numeric(df_TR_melted["DATA"], errors="coerce")
 
         # Substituir o dia pelo valor da coluna DATA, verificando se é um dia válido
         def ajustar_data(row):
@@ -154,13 +154,13 @@ def upload_file():
             except ValueError:
                 return None  # Retorna None para valores inválidos
 
-        df_tlps_melted["MES"] = df_tlps_melted.apply(ajustar_data, axis=1)
+        df_TR_melted["MES"] = df_TR_melted.apply(ajustar_data, axis=1)
 
         # Remover linhas onde MES seja inválido
-        df_tlps_melted = df_tlps_melted.dropna(subset=["MES"])
+        df_TR_melted = df_TR_melted.dropna(subset=["MES"])
 
-        print("\nMOVIMENTAÇÃO TLPS:")
-        print(df_tlps_melted)  # Exibir no terminal
+        print("\nMOVIMENTAÇÃO TR:")
+        print(df_TR_melted)  # Exibir no terminal
 
         # =================== PROCESSAMENTO DA ABA PATIO ===================
 
@@ -272,7 +272,7 @@ def upload_file():
 
         # CONCATENANDO OS DATA FRAMES
 
-        df_concatenado = pd.concat([df_splt_melted, df_tlps_melted, df_patio_melted, df_koni_melted], ignore_index=True)
+        df_concatenado = pd.concat([df_splt_melted, df_TR_melted, df_patio_melted, df_koni_melted], ignore_index=True)
 
         # =================== GRAVAR NO GOOGLE SHEETS ===================
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
