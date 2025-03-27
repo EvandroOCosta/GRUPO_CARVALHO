@@ -295,7 +295,7 @@ def upload_file():
         if existing_data_metas:
             df_existing_metas = pd.DataFrame(existing_data_metas[1:], columns=existing_data_metas[0])  # Ignorar cabeçalhos
             # Concatenar os novos dados com os existentes, sem duplicar a data
-            df_final_metas = pd.concat([df_existing_metas, df_final_metas], ignore_index=True).drop_duplicates()
+            df_final_metas = pd.concat([df_existing_metas, df_final_metas], ignore_index=True).drop_duplicates(keep='last')
         
         worksheet_metas.clear()  # Limpar a aba antes de atualizar
         set_with_dataframe(worksheet_metas, df_final_metas)
@@ -308,7 +308,7 @@ def upload_file():
         if existing_data_movimentacao:
             df_existing_movimentacao = pd.DataFrame(existing_data_movimentacao[1:], columns=existing_data_movimentacao[0])  # Ignorar cabeçalhos
             # Concatenar os novos dados com os existentes, sem duplicar a data
-            df_concatenado = pd.concat([df_existing_movimentacao, df_concatenado], ignore_index=True).drop_duplicates()
+            df_concatenado = pd.concat([df_existing_movimentacao, df_concatenado], ignore_index=True).drop_duplicates(keep='last')
         
         worksheet_movimentacao.clear()  # Limpar a aba antes de atualizar
         set_with_dataframe(worksheet_movimentacao, df_concatenado)
