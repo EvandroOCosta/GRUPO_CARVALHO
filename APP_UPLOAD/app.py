@@ -289,16 +289,34 @@ def upload_file():
 
         # Atualizar a aba METAS com df_final_metas
         worksheet_metas = spreadsheet.worksheet("METAS")
-        
-        # Ler os dados existentes na aba METAS para verificar se já existe alguma data
+
+        # Ler os dados existentes na aba METAS
         existing_data_metas = worksheet_metas.get_all_values()
-        if existing_data_metas:
+
+        if existing_data_metas and len(existing_data_metas) > 1:  # Se houver dados além do cabeçalho
             df_existing_metas = pd.DataFrame(existing_data_metas[1:], columns=existing_data_metas[0])  # Ignorar cabeçalhos
-            # Concatenar os novos dados com os existentes, sem duplicar a data
-            df_final_metas = pd.concat([df_existing_metas, df_final_metas], ignore_index=True).drop_duplicates(keep='last')
-        
-        worksheet_metas.clear()  # Limpar a aba antes de atualizar
-        set_with_dataframe(worksheet_metas, df_final_metas)
+            df_existing_metas = df_existing_metas.apply(lambda x: x.str.strip() if x.dtype == "object" else x)  # Remover espaços extras
+        else:
+            df_existing_metas = pd.DataFrame(columns=df_final_metas.columns)  # Criar DataFrame vazio com as mesmas colunas
+
+        # Concatenar os novos dados com os existentes
+        df_final_metas_atualizado = pd.concat([df_existing_metas, df_final_metas], ignore_index=True)
+
+        # Eliminar duplicatas considerando todas as colunas
+        df_final_metas_limpo = df_final_metas_atualizado.drop_duplicates()
+
+        # Limpar a aba antes de atualizar
+        worksheet_metas.clear()
+        set_with_dataframe(worksheet_metas, df_final_metas_limpo)
+
+        novos_dados_gravados = worksheet_metas.get_all_values()
+        df_novos_dados_metas = pd.DataFrame(novos_dados_gravados[1:], columns=novos_dados_gravados[0])
+        df_novos_dados_metas = df_novos_dados_metas.drop_duplicates()
+
+        worksheet_metas.clear()
+        set_with_dataframe(worksheet_metas, df_novos_dados_metas)
+
+
 
         # Atualizar a aba MOVIMENTAÇÃO com df_concatenado
         worksheet_movimentacao = spreadsheet.worksheet("MOVIMENTAÇÃO")
@@ -308,11 +326,24 @@ def upload_file():
         if existing_data_movimentacao:
             df_existing_movimentacao = pd.DataFrame(existing_data_movimentacao[1:], columns=existing_data_movimentacao[0])  # Ignorar cabeçalhos
             # Concatenar os novos dados com os existentes, sem duplicar a data
-            df_concatenado = pd.concat([df_existing_movimentacao, df_concatenado], ignore_index=True).drop_duplicates(keep='last')
+            df_existing_movimentacao = df_existing_movimentacao.drop_duplicates()
+            df_concatenado_atualizado = pd.concat([df_existing_movimentacao, df_concatenado], ignore_index=True)
+            
         
         worksheet_movimentacao.clear()  # Limpar a aba antes de atualizar
-        set_with_dataframe(worksheet_movimentacao, df_concatenado)
+        df_concatenado_limpo = df_concatenado_atualizado.drop_duplicates()
+        set_with_dataframe(worksheet_movimentacao, df_concatenado_limpo)
 
+        novos_dados_movimentacao = worksheet_movimentacao.get_all_values()
+        df_novos_dados_movimentacao = pd.DataFrame(novos_dados_movimentacao[1:], columns=novos_dados_movimentacao[0])  # Ignorar cabeçalhos
+        df_novos_dados_movimentacao = df_novos_dados_movimentacao.drop_duplicates()
+
+        # LIMPAR DADOS DE TEXTO NO CAMPO VALOR
+
+        df_novos_dados_movimentacao = df_novos_dados_movimentacao[pd.to_numeric(df_novos_dados_movimentacao["VALOR"], errors="coerce").notna()]
+
+        worksheet_movimentacao.clear()
+        set_with_dataframe(worksheet_movimentacao, df_novos_dados_movimentacao)
         # return df_concatenado.to_html() # Exibir os dados na página web
         return render_template('success.html')  # Renderiza a página de sucesso
 
